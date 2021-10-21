@@ -13,4 +13,7 @@ clean:
 	rm code/test.o code/graphics.o
 
 test:
-	g++ code/test.cpp code/graphics.h -lsfml-graphics -lsfml-window -lsfml-system
+	g++ code/main.cpp code/bee.h code/creature.h -lsfml-graphics -lsfml-window -lsfml-system
+
+setup:
+	export DISPLAY=:0.0
