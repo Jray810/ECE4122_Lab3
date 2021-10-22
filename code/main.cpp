@@ -9,21 +9,35 @@
  * 
  * Revision History:
  *      21OCT2021 ED-002: Document Created
+ *      21OCT2021 ED-003: Added basic bee
+ *      22OCT2021 ED-008: Added bank of targets 
  **/
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "bee.h"
 #include "unicorn.h"
 #include "woodland.h"
 #include "evil.h"
+#include "targetBank.h"
+
+#define WINDOW_XDIM 1920
+#define WINDOW_YDIM 1080
+
+#define START 0
+#define PLAYING 1
+#define END 2
+
+int gameState;
 
 using namespace sf;
 
 int main(){
     // Create a video mode object
-    VideoMode vm(1920, 1080);
+    VideoMode vm(WINDOW_XDIM, WINDOW_YDIM);
     // Create and open a window for the game
     RenderWindow window(vm, "Buzzy's Revenge!", Style::Default);
+
     // Create a texture to hold a graphic on the GPU
     Texture textureBackground;
     // Load a graphic into the texture
@@ -33,22 +47,43 @@ int main(){
     spriteBackground.setTexture(textureBackground);
     // Set the spriteBackground to cover the screen
     spriteBackground.setPosition(0, 0);
-    Bee flyingBee(60,40,100,100);
-    Unicorn madUnicorn(133,96,200,200);
-    Woodland woodlandFrog(133,96,300,300,"frog");
-    Evil evilTiger(133,96,400,400,"tiger");
+
+    Bee flyingBee(60,40,1800,100);
+    TargetBank theTargets;
+
+    gameState = START;
     while(window.isOpen())
     {
+        /**
+         * Check for User Input
+         **/
         if (Keyboard::isKeyPressed(Keyboard::Escape))
         {
             window.close();
         }
+
+
+        /**
+         * Perform Drawings
+         **/
         window.clear();
         window.draw(spriteBackground);
-        window.draw(flyingBee.getSpriteCreature());
-        window.draw(madUnicorn.getSpriteCreature());
-        window.draw(woodlandFrog.getSpriteCreature());
-        window.draw(evilTiger.getSpriteCreature());
+        if(flyingBee.getAlive())
+        {
+            window.draw(flyingBee.getSpriteCreature());
+        }
+        for(int i=0; i<theTargets.getCol1Size(); ++i)
+        {
+            window.draw(theTargets.getColCreature(0,i)->getSpriteCreature());
+        }
+        for(int i=0; i<theTargets.getCol2Size(); ++i)
+        {
+            window.draw(theTargets.getColCreature(1,i)->getSpriteCreature());
+        }
+        if(gameState == START)
+        {
+
+        }
         window.display();
     }
 

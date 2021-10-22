@@ -9,6 +9,7 @@
  * 
  * Revision History:
  *      21OCT2021 ED-003: Document Created
+ *      22OCT2021 ED-008: Added ScoreToken functionality
  **/
 
 #ifndef BEE_H
@@ -16,13 +17,17 @@
 
 #include "creature.h"
 
-class Bee: public Creature{
+class Bee: public Creature
+{
 public:
     Bee(int xDim, int yDim, int x, int y):Creature(xDim, yDim, x, y){initBee();}
     void initBee()
     {
         setTextureAndSprite("graphics/insect.png");
-        setPtValue(75);
+        struct ScoreToken beeToken;
+        beeToken.points = 75;
+        beeToken.lives = 0;
+        setToken(beeToken);
         setAlive(true);
         setCreatureID("Bee");
     }

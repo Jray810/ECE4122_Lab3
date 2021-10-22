@@ -9,6 +9,7 @@
  * 
  * Revision History:
  *      21OCT2021 ED-003: Document Created
+ *      22OCT2021 ED-008: Added ScoreToken functionality
  **/
 
 #ifndef WOODLAND_H
@@ -22,7 +23,10 @@ public:
     void initWoodland(std::string name)
     {
         setTextureAndSprite("graphics/" + name + ".png");
-        setPtValue(0);
+        struct ScoreToken woodlandToken;
+        woodlandToken.points = 0;
+        woodlandToken.lives = -1;
+        setToken(woodlandToken);
         setAlive(true);
         setCreatureID(name);
     }

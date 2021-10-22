@@ -9,6 +9,7 @@
  * 
  * Revision History:
  *      21OCT2021 ED-003: Document Created
+ *      22OCT2021 ED-008: Added ScoreToken functionality
  **/
 
 #ifndef EVIL_H
@@ -22,7 +23,10 @@ public:
     void initEvil(std::string name)
     {
         setTextureAndSprite("graphics/" + name + ".png");
-        setPtValue(0);
+        struct ScoreToken evilToken;
+        evilToken.points = 25;
+        evilToken.lives = 0;
+        setToken(evilToken);
         setAlive(true);
         setCreatureID(name);
     }

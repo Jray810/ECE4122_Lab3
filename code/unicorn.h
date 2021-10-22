@@ -9,6 +9,7 @@
  * 
  * Revision History:
  *      21OCT2021 ED-003: Document Created
+ *      22OCT2021 ED-008: Added ScoreToken functionality
  **/
 
 #ifndef UNICORN_H
@@ -22,7 +23,10 @@ public:
     void initUnicorn()
     {
         setTextureAndSprite("graphics/angry_unicorn.png");
-        setPtValue(0);
+        struct ScoreToken unicornToken;
+        unicornToken.points = 0;
+        unicornToken.lives = 1;
+        setToken(unicornToken);
         setAlive(true);
         setCreatureID("Unicorn");
     }
