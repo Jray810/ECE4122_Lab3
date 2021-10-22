@@ -1,3 +1,16 @@
+/**
+ * Creature Class
+ * 
+ * Author: Raymond Jia
+ * Class: ECE 4122 - Hurley
+ * Lab 3
+ * 
+ * Description:
+ * 
+ * Revision History:
+ *      21OCT2021 ED-002: Document Created
+ **/
+
 #ifndef CREATURE_H
 #define CREATURE_H
 
@@ -14,6 +27,9 @@ public:
     void setYDim(int val){yDim = val;}
     void setXPos(int val){xPos = val;}
     void setYPos(int val){yPos = val;}
+    void setPtValue(int val){ptValue = val;}
+    void setAlive(bool val){alive = val;}
+    void setCreatureID(std::string name){creatureID = name;}
     void setTextureAndSprite(std::string filePath)
     {
         textureCreature.loadFromFile(filePath);
@@ -28,8 +44,11 @@ public:
     int getXBoundMax(){return xPos + xDim;}
     int getYBoundMin(){return yPos;}
     int getYBoundMax(){return yPos + yDim;}
-    double getXPos(){return xPos;}
-    double getYPos(){return yPos;}
+    int getXPos(){return xPos;}
+    int getYPos(){return yPos;}
+    int getPtValue(){return ptValue;}
+    bool getAlive(){return alive;}
+    std::string getCreatureID(){return creatureID;}
     sf::Texture getTextureCreature(){return textureCreature;}
     sf::Sprite getSpriteCreature(){return spriteCreature;}
 
@@ -38,6 +57,9 @@ private:
     int yDim;
     int xPos;
     int yPos;
+    int ptValue;
+    bool alive;
+    std::string creatureID;
     sf::Texture textureCreature;
     sf::Sprite spriteCreature;
 };
