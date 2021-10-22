@@ -13,7 +13,7 @@ clean:
 	rm code/test.o code/graphics.o
 
 test:
-	g++ code/main.cpp code/*.h -lsfml-graphics -lsfml-window -lsfml-system
+	g++ code/*.h code/*.cpp -lsfml-graphics -lsfml-window -lsfml-system
 	./a.out
 	rm code/*.h.gch
 
