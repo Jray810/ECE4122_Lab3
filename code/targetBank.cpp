@@ -9,6 +9,7 @@
  * 
  * Revision History:
  *      22OCT2021 ED-008: Document Created
+ *      22OCT2021 ED-012: Resized creature images
  **/
 
 #include "targetBank.h"
@@ -23,18 +24,18 @@ TargetBank::TargetBank()
 {
     srand(time(NULL));
 
-    Unicorn* madUnicorn = new Unicorn(133,96,0,0);
+    Unicorn* madUnicorn = new Unicorn(200,144,0,0);
 
-    Woodland* woodlandBunny = new Woodland(133,96,0,0,"bunny");
-    Woodland* woodlandChicken = new Woodland(133,96,0,0,"chicken");
-    Woodland* woodlandDog = new Woodland(133,96,0,0,"dog");
-    Woodland* woodlandFrog = new Woodland(133,96,0,0,"frog");
-    Woodland* woodlandMouse = new Woodland(133,96,0,0,"mouse");
-    Woodland* woodlandPig = new Woodland(133,96,0,0,"pig");
-    Woodland* woodlandSheep = new Woodland(133,96,0,0,"sheep");
+    Woodland* woodlandBunny = new Woodland(200,144,0,0,"bunny");
+    Woodland* woodlandChicken = new Woodland(200,144,0,0,"chicken");
+    Woodland* woodlandDog = new Woodland(200,144,0,0,"dog");
+    Woodland* woodlandFrog = new Woodland(200,144,0,0,"frog");
+    Woodland* woodlandMouse = new Woodland(200,144,0,0,"mouse");
+    Woodland* woodlandPig = new Woodland(200,144,0,0,"pig");
+    Woodland* woodlandSheep = new Woodland(200,144,0,0,"sheep");
 
-    Evil* evilTiger = new Evil(133,96,0,0,"tiger");
-    Evil* evilBulldog = new Evil(133,96,0,0,"bulldog");
+    Evil* evilTiger = new Evil(200,144,0,0,"tiger");
+    Evil* evilBulldog = new Evil(200,144,0,0,"bulldog");
 
     woodlanders.push_back(madUnicorn);
     woodlanders.push_back(woodlandBunny);
@@ -89,8 +90,8 @@ void TargetBank::targetReset()
 
     for(int i=0; i<5; ++i)
     {
-        col1[i]->setPos(1654, 936 - 96 * i);
-        col2[i]->setPos(1787, 936 - 96 * i);
+        col1[i]->setPos(1500, 900 - 144 * i);
+        col2[i]->setPos(1700, 900 - 144 * i);
     }
 }
 
@@ -98,12 +99,12 @@ void TargetBank::positionUpdate()
 {
     for(int i=0; i<col1.size(); ++i)
     {
-        col1[i]->setYPos(936 - 96 * i);
+        col1[i]->setYPos(900 - 144 * i);
     }
 
     for(int i=0; i<col2.size(); ++i)
     {
-        col2[i]->setYPos(936 - 96 * i);
+        col2[i]->setYPos(900 - 144 * i);
     }
 }
 
