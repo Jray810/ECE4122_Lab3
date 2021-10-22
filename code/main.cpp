@@ -35,8 +35,8 @@ int main(){
     spriteBackground.setPosition(0, 0);
     Bee flyingBee(60,40,100,100);
     Unicorn madUnicorn(133,96,200,200);
-    Woodland woodlandFrog(98,96,300,300,"frog");
-    Evil evilTiger(872,917,400,400,"tiger");
+    Woodland woodlandFrog(133,96,300,300,"frog");
+    Evil evilTiger(133,96,400,400,"tiger");
     while(window.isOpen())
     {
         if (Keyboard::isKeyPressed(Keyboard::Escape))
