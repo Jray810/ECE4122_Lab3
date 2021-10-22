@@ -10,6 +10,7 @@
  * Revision History:
  *      21OCT2021 ED-002: Document Created
  *      22OCT2021 ED-008: Added ScoreToken struct and fixed position bugs
+ *      22OCT2021 ED-009: Removed iostream include and cout commands
  **/
 
 #ifndef CREATURE_H
@@ -17,7 +18,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
-#include <iostream>
 
 struct ScoreToken
 {
@@ -43,7 +43,6 @@ public:
     void setCreatureID(std::string name){creatureID = name;}
     void setTextureAndSprite(std::string filePath)
     {
-        std::cout<<filePath<<std::endl;
         textureCreature.loadFromFile(filePath);
         spriteCreature.setTexture(textureCreature);
         spriteCreature.setPosition(xPos, yPos);
