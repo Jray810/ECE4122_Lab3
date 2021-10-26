@@ -11,6 +11,7 @@
  *      21OCT2021 ED-002: Document Created
  *      22OCT2021 ED-008: Added ScoreToken struct and fixed position bugs
  *      22OCT2021 ED-009: Removed iostream include and cout commands
+ *      24OCT2021 ED-013: Added hit detection
  **/
 
 #ifndef CREATURE_H
@@ -32,6 +33,16 @@ public:
         xDim(xDimension),yDim(yDimension),xPos(x),yPos(y){setPos(x,y);}
     Creature(int xDimension, int yDimension, int x, int y, std::string ID):
         xDim(xDimension),yDim(yDimension),xPos(x),yPos(y),creatureID(ID){setPos(x,y); setTextureAndSprite(ID);}
+
+    bool isHit(int x, int y)
+    {
+        if (alive && x > xPos && x < xPos + xDim && y > yPos && y < yPos + yDim)
+        {
+            alive = false;
+            return true;
+        }
+        return false;
+    }
 
     // Setters
     void setXDim(int val){xDim = val;}

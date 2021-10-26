@@ -25,9 +25,8 @@
 #define WINDOW_XDIM 1920
 #define WINDOW_YDIM 1080
 
-#define START 0
+#define PAUSED 0
 #define PLAYING 1
-#define END 2
 
 int gameState;
 int score;
@@ -206,7 +205,7 @@ int main(){
         window.draw(scoreText);
         window.draw(livesText);
         window.draw(powerText);
-        if(gameState == START)
+        if(gameState == PAUSED)
         {
             window.draw(titleText);
             window.draw(instr1Text);
@@ -217,6 +216,19 @@ int main(){
             window.draw(author2Text);
         }
         window.display();
+
+        while (gameState == PAUSED)
+        {
+            if (Keyboard::isKeyPressed(Keyboard::Enter))
+            {
+                gameState = PLAYING;
+            }
+            else if (Keyboard::isKeyPressed(Keyboard::Escape))
+            {
+                gameState = PLAYING;
+                window.close();
+            }
+        }
     }
 
     return 0;
