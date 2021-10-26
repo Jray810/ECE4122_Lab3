@@ -10,6 +10,7 @@
  * Revision History:
  *      21OCT2021 ED-003: Document Created
  *      22OCT2021 ED-008: Added ScoreToken functionality
+ *      26OCT2021 ED-015: Change value types to floats
  **/
 
 #ifndef UNICORN_H
@@ -19,7 +20,7 @@
 
 class Unicorn: public Creature{
 public:
-    Unicorn(int xDim, int yDim, int x, int y):Creature(xDim, yDim, x, y){initUnicorn();}
+    Unicorn(float xDim, float yDim, float x, float y):Creature(xDim, yDim, x, y){initUnicorn();}
     void initUnicorn()
     {
         setTextureAndSprite("graphics/angry_unicorn.png");
