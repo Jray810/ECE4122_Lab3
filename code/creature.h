@@ -12,6 +12,7 @@
  *      22OCT2021 ED-008: Added ScoreToken struct and fixed position bugs
  *      22OCT2021 ED-009: Removed iostream include and cout commands
  *      24OCT2021 ED-013: Added hit detection
+ *      26OCT2021 ED-014: Added rotation handling
  **/
 
 #ifndef CREATURE_H
@@ -50,6 +51,7 @@ public:
     void setXPos(int val){xPos = val; spriteCreature.setPosition(xPos,yPos);}
     void setYPos(int val){yPos = val; spriteCreature.setPosition(xPos,yPos);}
     void setPos(int x, int y){xPos = x; yPos = y; spriteCreature.setPosition(x,y);}
+    void setAngle(float val){angle = val; spriteCreature.setRotation(val);}
     void setAlive(bool val){alive = val;}
     void setCreatureID(std::string name){creatureID = name;}
     void setTextureAndSprite(std::string filePath)
@@ -69,6 +71,7 @@ public:
     int getYBoundMax(){return yPos + yDim;}
     int getXPos(){return xPos;}
     int getYPos(){return yPos;}
+    float getAngle(){return angle;}
     bool getAlive(){return alive;}
     std::string getCreatureID(){return creatureID;}
     sf::Texture getTextureCreature(){return textureCreature;}
@@ -80,6 +83,7 @@ private:
     int yDim;
     int xPos;
     int yPos;
+    float angle;
     bool alive;
     std::string creatureID;
     sf::Texture textureCreature;
