@@ -15,6 +15,7 @@
  *      26OCT2021 ED-014: Added rotation handling
  *      26OCT2021 ED-015: Change value types to floats
  *      26OCT2021 ED-016: Added angle handling and setOriginCenter
+ *      27OCT2021 ED-021: Adjusted isHit to account for origin at center
  **/
 
 #ifndef CREATURE_H
@@ -39,7 +40,7 @@ public:
 
     bool isHit(float x, float y)
     {
-        if (alive && x > xPos && x < xPos + xDim && y > yPos && y < yPos + yDim)
+        if (alive && x > xPos - xDim/2 && x < xPos + xDim/2 && y > yPos - yDim/2 && y < yPos + yDim/2)
         {
             alive = false;
             return true;

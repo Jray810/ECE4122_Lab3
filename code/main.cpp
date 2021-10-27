@@ -1,5 +1,5 @@
 /**
- * Main Class
+ * Main
  * 
  * Author: Raymond Jia
  * Class: ECE 4122 - Hurley
@@ -13,6 +13,8 @@
  *      22OCT2021 ED-008: Added bank of targets
  *      22OCT2021 ED-011: Added pause screen text
  *      26OCT2021 ED-020: Added Buzzy implementation and full base game logic
+ *      27OCT2021 ED-022: Cleaned up Text initialization, added extra credit
+ *                        animation functionality
  **/
 
 #include <SFML/Graphics.hpp>
@@ -30,8 +32,17 @@
 #define LAUNCH_PREP 1
 #define PLAYING 2
 #define INFLIGHT 3
+#define B_FALLING 4
+#define C_FALLING 5
+#define RESETTING 6
 
-bool hitChecker(float xPos, float yPos);
+#define H_BLANK 0
+#define H_WOODLAND 1
+#define H_EVIL 2
+#define H_OTHER 3
+
+int hitChecker(float xPos, float yPos);
+void initializeTitles(int window_xDim, int window_yDim);
 
 int gameState;
 int score;
@@ -39,6 +50,18 @@ int lives;
 Bee* flyingBee;
 TargetBank* theTargets;
 Buzzy* buzzBullet;
+sf::Font boldFont;
+sf::Font regFont;
+sf::Text scoreText("Score: ", regFont, 36);
+sf::Text livesText("Lives", regFont, 36);
+sf::Text powerText("Power", regFont, 36);
+sf::Text titleText("Buzzy's Revenge", boldFont, 100);
+sf::Text instr1Text("Press Enter to Restart Game", regFont, 75);
+sf::Text instr2Text("Press Esc to exit", regFont, 75);
+sf::Text instr3Text("Press Space to Powerup", regFont, 75);
+sf::Text instr4Text("Press up/down arrow to aim", regFont, 75);
+sf::Text author1Text("created by", regFont, 36);
+sf::Text author2Text("Raymond Jia", regFont, 36);
 
 using namespace sf;
 
@@ -66,124 +89,11 @@ int main(){
 
     score = 0;
     lives = 5;
-
-//------------------------------------------
-	Text titleText;
-    Text instr1Text;
-    Text instr2Text;
-    Text instr3Text;
-    Text instr4Text;
-    Text author1Text;
-    Text author2Text;
-	Text scoreText;
-    Text livesText;
-    Text powerText;
-
-	Font boldFont;
-	boldFont.loadFromFile("fonts/comicbd.ttf");
-
-    Font regFont;
+    boldFont.loadFromFile("fonts/comicbd.ttf");
     regFont.loadFromFile("fonts/comic.ttf");
 
-	titleText.setFont(boldFont);
-    instr1Text.setFont(regFont);
-    instr2Text.setFont(regFont);
-    instr3Text.setFont(regFont);
-    instr4Text.setFont(regFont);
-    author1Text.setFont(regFont);
-    author2Text.setFont(regFont);
-	scoreText.setFont(regFont);
-    livesText.setFont(regFont);
-    powerText.setFont(regFont);
+    initializeTitles(WINDOW_XDIM, WINDOW_YDIM);
 
-	titleText.setString("Buzzy's Revenge");
-    instr1Text.setString("Press Enter to Restart Game");
-    instr2Text.setString("Press Esc to exit");
-    instr3Text.setString("Press Space to Powerup");
-    instr4Text.setString("Press up/down arrow to aim");
-    author1Text.setString("created by");
-    author2Text.setString("Raymond Jia");
-	scoreText.setString("Score: " + std::to_string(score));
-    livesText.setString("Lives");
-    powerText.setString("Power");
-
-	titleText.setCharacterSize(100);
-    instr1Text.setCharacterSize(75);
-    instr2Text.setCharacterSize(75);
-    instr3Text.setCharacterSize(75);
-    instr4Text.setCharacterSize(75);
-    author1Text.setCharacterSize(36);
-    author2Text.setCharacterSize(36);
-	scoreText.setCharacterSize(36);
-    livesText.setCharacterSize(36);
-    powerText.setCharacterSize(36);
-
-	titleText.setFillColor(Color::Red);
-	instr1Text.setFillColor(Color::White);
-	instr2Text.setFillColor(Color::White);
-	instr3Text.setFillColor(Color::White);
-	instr4Text.setFillColor(Color::White);
-	author1Text.setFillColor(Color::White);
-	author2Text.setFillColor(Color::White);
-	scoreText.setFillColor(Color::White);
-	livesText.setFillColor(Color::White);
-	powerText.setFillColor(Color::White);
-
-	FloatRect titleTextRect = titleText.getLocalBounds();
-    FloatRect instr1TextRect = instr1Text.getLocalBounds();
-    FloatRect instr2TextRect = instr2Text.getLocalBounds();
-    FloatRect instr3TextRect = instr3Text.getLocalBounds();
-    FloatRect instr4TextRect = instr4Text.getLocalBounds();
-    FloatRect author1TextRect = author1Text.getLocalBounds();
-    FloatRect author2TextRect = author2Text.getLocalBounds();
-
-	titleText.setOrigin(titleTextRect.left +
-		titleTextRect.width / 2.0f,
-		titleTextRect.top +
-		titleTextRect.height / 4.0f);
-
-	instr1Text.setOrigin(instr1TextRect.left +
-		instr1TextRect.width / 2.0f,
-		instr1TextRect.top +
-		instr1TextRect.height / 2.0f);
-
-	instr2Text.setOrigin(instr2TextRect.left +
-		instr2TextRect.width / 2.0f,
-		instr2TextRect.top +
-		instr2TextRect.height / 2.0f);
-
-	instr3Text.setOrigin(instr3TextRect.left +
-		instr3TextRect.width / 2.0f,
-		instr3TextRect.top +
-		instr3TextRect.height / 2.0f);
-
-	instr4Text.setOrigin(instr4TextRect.left +
-		instr4TextRect.width / 2.0f,
-		instr4TextRect.top +
-		instr4TextRect.height / 2.0f);
-
-	author1Text.setOrigin(author1TextRect.left +
-		author1TextRect.width / 2.0f,
-		author1TextRect.top +
-		author1TextRect.height / 2.0f);
-
-	author2Text.setOrigin(author2TextRect.left +
-		author2TextRect.width / 2.0f,
-		author2TextRect.top +
-		author2TextRect.height / 2.0f);
-
-	titleText.setPosition(WINDOW_XDIM / 2.0f, WINDOW_YDIM / 5.0f);
-	instr1Text.setPosition(WINDOW_XDIM / 2.0f, WINDOW_YDIM / 2.0f - 112);
-	instr2Text.setPosition(WINDOW_XDIM / 2.0f, WINDOW_YDIM / 2.0f - 37);
-	instr3Text.setPosition(WINDOW_XDIM / 2.0f, WINDOW_YDIM / 2.0f + 38);
-	instr4Text.setPosition(WINDOW_XDIM / 2.0f, WINDOW_YDIM / 2.0f + 113);
-	author1Text.setPosition(WINDOW_XDIM / 2.0f, WINDOW_YDIM * 3 / 4.0f);
-	author2Text.setPosition(WINDOW_XDIM / 2.0f, WINDOW_YDIM * 3 / 4.0f + 38);
-
-    scoreText.setPosition(1700,40);
-	livesText.setPosition(40, 40);
-    powerText.setPosition(40,980);
-//-----------------------------------------------
     RectangleShape powerBarOutline;
     powerBarOutline.setSize(Vector2f(400,40));
     powerBarOutline.setFillColor(Color::Transparent);
@@ -196,7 +106,7 @@ int main(){
     powerBar.setFillColor(Color::Red);
     powerBar.setPosition(160, 980);
 
-    flyingBee = new Bee(60,40,1500,200);
+    flyingBee = new Bee(100,67,1800,200);
     buzzBullet = new Buzzy(237,85,40,WINDOW_YDIM / 2.0f);
     theTargets = new TargetBank();
     Clock clock;
@@ -218,8 +128,6 @@ int main(){
 
         if (gameState == PAUSED)
         {
-            initVelocity = 0;
-            lives = 5;
             if (Keyboard::isKeyPressed(Keyboard::Enter))
             {
                 score = 0;
@@ -229,12 +137,14 @@ int main(){
         }
         else if (gameState == LAUNCH_PREP)
         {
+            buzzBullet->reset(237,85,40,WINDOW_YDIM / 2.0f);
             initVelocity = 0;
             lastSpaceBarHeld = false;
             gameState = PLAYING;
         }
         else if (gameState == PLAYING)
         {
+            flyingBee->updatePosition();
             float newAngle;
             if (Keyboard::isKeyPressed(Keyboard::Up))
             {
@@ -264,36 +174,85 @@ int main(){
             }
             else if (Keyboard::isKeyPressed(Keyboard::Enter))
             {
-                buzzBullet->reset(237,85,40,WINDOW_YDIM / 2.0f);
-                theTargets->targetReset();
-                gameState = PAUSED;
-                sleep(1);
+                gameState = RESETTING;
             }
         }
         else if (gameState == INFLIGHT)
         {
             timeCheck = clock.getElapsedTime();
             buzzBullet->updatePosition(timeCheck.asSeconds());
-            if (hitChecker(buzzBullet->getXPos(), buzzBullet->getYPos()))
+            flyingBee->updatePosition();
+            switch (hitChecker(buzzBullet->getXPos(), buzzBullet->getYPos()))
             {
-                buzzBullet->reset(237,85,40,WINDOW_YDIM / 2.0f);
-                gameState = LAUNCH_PREP;
-                if (!theTargets->refresh())
-                {
-                    theTargets->targetReset();
-                }
+                case H_WOODLAND:
+                    theTargets->refresh(WINDOW_YDIM);
+                    gameState = B_FALLING;
+                    break;
+                case H_EVIL:
+                    buzzBullet->reset(237,85,40,WINDOW_YDIM / 2.0f);
+                    gameState = C_FALLING;
+                    break;
+                case H_OTHER:
+                    theTargets->refresh(WINDOW_YDIM);
+                    gameState = LAUNCH_PREP;
+                    break;
+                default:
+                    break;
             }
-            else if (Keyboard::isKeyPressed(Keyboard::Enter))
+
+            if (Keyboard::isKeyPressed(Keyboard::Enter))
             {
-                buzzBullet->reset(237,85,40,WINDOW_YDIM / 2.0f);
-                gameState = PAUSED;
-                sleep(1);
+                gameState = RESETTING;
             }
+
             if (lives < 1)
             {
-                theTargets->targetReset();
-                gameState = PAUSED;
+                gameState = RESETTING;
             }
+        }
+        else if (gameState == B_FALLING)
+        {
+            buzzBullet->setYPos(buzzBullet->getYPos()+5);
+            buzzBullet->setAngle(buzzBullet->getAngle()+20);
+            if (buzzBullet->getYPos() > WINDOW_YDIM)
+            {
+                gameState = LAUNCH_PREP;
+            }
+
+            if (Keyboard::isKeyPressed(Keyboard::Enter))
+            {
+                gameState = RESETTING;
+            }
+        }
+        else if (gameState == C_FALLING)
+        {
+            if (!theTargets->refresh(WINDOW_YDIM))
+            {
+                if (theTargets->getCol1Size() == 0 && theTargets->getCol2Size() == 0)
+                {
+                    theTargets->targetReset();
+                    if (!flyingBee->getAlive())
+                    {
+                        flyingBee->reset();
+                    }
+                }
+                gameState = LAUNCH_PREP;
+            }
+
+            if (Keyboard::isKeyPressed(Keyboard::Enter))
+            {
+                gameState = RESETTING;
+            }
+        }
+        else if (gameState == RESETTING)
+        {
+            initVelocity = 0;
+            lives = 5;
+            buzzBullet->reset(237,85,40,WINDOW_YDIM / 2.0f);
+            flyingBee->reset();
+            theTargets->targetReset();
+            gameState = PAUSED;
+            sleep(1);
         }
 
         /**
@@ -305,10 +264,6 @@ int main(){
         {
             window.draw(flyingBee->getSpriteCreature());
         }
-        if(buzzBullet->getAlive())
-        {
-            window.draw(buzzBullet->getSpriteCreature());
-        }
         for(int i=0; i<theTargets->getCol1Size(); ++i)
         {
             window.draw(theTargets->getColCreature(0,i)->getSpriteCreature());
@@ -317,7 +272,11 @@ int main(){
         {
             window.draw(theTargets->getColCreature(1,i)->getSpriteCreature());
         }
-	    scoreText.setString("Score: " + std::to_string(score));
+        if(buzzBullet->getAlive())
+        {
+            window.draw(buzzBullet->getSpriteCreature());
+        }
+        scoreText.setString("Score: " + std::to_string(score));
         window.draw(scoreText);
         window.draw(livesText);
         window.draw(powerText);
@@ -347,18 +306,18 @@ int main(){
     return 0;
 }
 
-bool hitChecker(float xPos, float yPos)
+int hitChecker(float xPos, float yPos)
 {
     if (buzzBullet->getXPos() > WINDOW_XDIM || buzzBullet->getYPos() > WINDOW_YDIM)
     {
         lives--;
-        return true;
+        return H_OTHER;
     }
 
     if (flyingBee->isHit(xPos, yPos))
     {
         score += flyingBee->getToken().points;
-        return true;
+        return H_OTHER;
     }
 
     for (int i=0; i<theTargets->getCol1Size(); ++i)
@@ -367,7 +326,15 @@ bool hitChecker(float xPos, float yPos)
         {
             score += theTargets->getColCreature(0,i)->getToken().points;
             lives += theTargets->getColCreature(0,i)->getToken().lives;
-            return true;
+            switch (theTargets->getColCreature(0,i)->getToken().lives)
+            {
+                case -1:
+                    return H_WOODLAND;
+                case 0:
+                    return H_EVIL;
+                case 1:
+                    return H_OTHER;
+            }
         }
     }
 
@@ -377,9 +344,85 @@ bool hitChecker(float xPos, float yPos)
         {
             score += theTargets->getColCreature(1,i)->getToken().points;
             lives += theTargets->getColCreature(1,i)->getToken().lives;
-            return true;
+            switch (theTargets->getColCreature(1,i)->getToken().lives)
+            {
+                case -1:
+                    return H_WOODLAND;
+                case 0:
+                    return H_EVIL;
+                case 1:
+                    return H_OTHER;
+            }
         }
     }
     
-    return false;
+    return H_BLANK;
+}
+
+void initializeTitles(int window_xDim, int window_yDim)
+{
+    scoreText.setFillColor(Color::White);
+    livesText.setFillColor(Color::White);
+    powerText.setFillColor(Color::White);
+    titleText.setFillColor(Color::Red);
+    instr1Text.setFillColor(Color::White);
+    instr2Text.setFillColor(Color::White);
+    instr3Text.setFillColor(Color::White);
+    instr4Text.setFillColor(Color::White);
+    author1Text.setFillColor(Color::White);
+    author2Text.setFillColor(Color::White);
+
+    FloatRect titleTextRect = titleText.getLocalBounds();
+    FloatRect instr1TextRect = instr1Text.getLocalBounds();
+    FloatRect instr2TextRect = instr2Text.getLocalBounds();
+    FloatRect instr3TextRect = instr3Text.getLocalBounds();
+    FloatRect instr4TextRect = instr4Text.getLocalBounds();
+    FloatRect author1TextRect = author1Text.getLocalBounds();
+    FloatRect author2TextRect = author2Text.getLocalBounds();
+
+    titleText.setOrigin(titleTextRect.left +
+        titleTextRect.width / 2.0f,
+        titleTextRect.top +
+        titleTextRect.height / 2.0f);
+
+    instr1Text.setOrigin(instr1TextRect.left +
+        instr1TextRect.width / 2.0f,
+        instr1TextRect.top +
+        instr1TextRect.height / 2.0f);
+
+    instr2Text.setOrigin(instr2TextRect.left +
+        instr2TextRect.width / 2.0f,
+        instr2TextRect.top +
+        instr2TextRect.height / 2.0f);
+
+    instr3Text.setOrigin(instr3TextRect.left +
+        instr3TextRect.width / 2.0f,
+        instr3TextRect.top +
+        instr3TextRect.height / 2.0f);
+
+    instr4Text.setOrigin(instr4TextRect.left +
+        instr4TextRect.width / 2.0f,
+        instr4TextRect.top +
+        instr4TextRect.height / 2.0f);
+
+    author1Text.setOrigin(author1TextRect.left +
+        author1TextRect.width / 2.0f,
+        author1TextRect.top +
+        author1TextRect.height / 2.0f);
+
+    author2Text.setOrigin(author2TextRect.left +
+        author2TextRect.width / 2.0f,
+        author2TextRect.top +
+        author2TextRect.height / 2.0f);
+
+    scoreText.setPosition(1700,40);
+    livesText.setPosition(40, 40);
+    powerText.setPosition(40,980);
+    titleText.setPosition(window_xDim / 2.0f, window_yDim / 5.0f);
+    instr1Text.setPosition(window_xDim / 2.0f, window_yDim / 2.0f - 112);
+    instr2Text.setPosition(window_xDim / 2.0f, window_yDim / 2.0f - 37);
+    instr3Text.setPosition(window_xDim / 2.0f, window_yDim / 2.0f + 38);
+    instr4Text.setPosition(window_xDim / 2.0f, window_yDim / 2.0f + 113);
+    author1Text.setPosition(window_xDim / 2.0f, window_yDim * 3 / 4.0f);
+    author2Text.setPosition(window_xDim / 2.0f, window_yDim * 3 / 4.0f + 38);
 }

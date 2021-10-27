@@ -11,6 +11,8 @@
  *      22OCT2021 ED-008: Document Created
  *      22OCT2021 ED-012: Resized creature images
  *      26OCT2021 ED-019: Added refresh() function
+ *      27OCT2021 ED-021: Updated refresh function
+ *                        to add spinning and falling animations
  **/
 
 #include "targetBank.h"
@@ -91,14 +93,16 @@ void TargetBank::targetReset()
 
     for(int i=0; i<5; ++i)
     {
-        col1[i]->setPos(1500, 900 - 144 * i);
+        col1[i]->setPos(1600, 972 - 144 * i);
         col1[i]->setAlive(true);
-        col2[i]->setPos(1700, 900 - 144 * i);
+        col1[i]->setAngle(0);
+        col2[i]->setPos(1800, 972 - 144 * i);
         col2[i]->setAlive(true);
+        col2[i]->setAngle(0);
     }
 }
 
-bool TargetBank::refresh()
+bool TargetBank::refresh(int window_yDim)
 {
     if (col1.size() > 0)
     {
@@ -108,14 +112,33 @@ bool TargetBank::refresh()
             {
                 if (col1[i]->getCreatureID() == "tiger" || col1[i]->getCreatureID() == "bulldog")
                 {
-                    col1.clear();
-                    break;
+                    if (col1[col1.size()-1]->getYPos() > window_yDim)
+                    {
+                        col1.clear();
+                        return false;
+                    }
+                    else
+                    {
+                        for (int j=0; j<col1.size(); ++j)
+                        {
+                            col1[j]->setYPos(col1[j]->getYPos() + 5);
+                            col1[j]->setAngle(col1[j]->getAngle() + 20);
+                        }
+                        return true;
+                    }
                 }
                 else if (col1[i]->getCreatureID() == "Unicorn")
                 {
                     col1.erase(col1.begin()+i);
                     positionUpdate();
-                    break;
+                    if (col1.size() > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
@@ -133,14 +156,33 @@ bool TargetBank::refresh()
             {
                 if (col2[i]->getCreatureID() == "tiger" || col2[i]->getCreatureID() == "bulldog")
                 {
-                    col2.clear();
-                    break;
+                    if (col2[col2.size()-1]->getYPos() > window_yDim)
+                    {
+                        col2.clear();
+                        return false;
+                    }
+                    else
+                    {
+                        for (int j=0; j<col2.size(); ++j)
+                        {
+                            col2[j]->setYPos(col2[j]->getYPos() + 5);
+                            col2[j]->setAngle(col2[j]->getAngle() + 20);
+                        }
+                        return true;
+                    }
                 }
                 else if (col2[i]->getCreatureID() == "Unicorn")
                 {
                     col2.erase(col2.begin()+i);
                     positionUpdate();
-                    break;
+                    if (col2.size() > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
@@ -162,12 +204,12 @@ void TargetBank::positionUpdate()
 {
     for(int i=0; i<col1.size(); ++i)
     {
-        col1[i]->setYPos(900 - 144 * i);
+        col1[i]->setYPos(972 - 144 * i);
     }
 
     for(int i=0; i<col2.size(); ++i)
     {
-        col2[i]->setYPos(900 - 144 * i);
+        col2[i]->setYPos(972 - 144 * i);
     }
 }
 
