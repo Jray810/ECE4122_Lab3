@@ -10,6 +10,8 @@
  * Revision History:
  *      22OCT2021 ED-008: Document Created
  *      26OCT2021 ED-019: Added refresh() function
+ *      27OCT2021 ED-021: Updated refresh function
+ *                        to add spinning and falling animations
  **/
 
 #ifndef TARGETBANK_H
@@ -27,10 +29,8 @@ public:
     ~TargetBank();
 
     void targetReset();
-    bool refresh();
+    bool refresh(int window_yDim);
     void positionUpdate();
-
-    // Setters
 
     // Getters
     int getCol1Size(){return col1.size();}
