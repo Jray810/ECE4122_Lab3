@@ -11,6 +11,7 @@
  *      21OCT2021 ED-003: Document Created
  *      22OCT2021 ED-008: Added ScoreToken functionality
  *      26OCT2021 ED-015: Change value types to floats
+ *      27OCT2021 ED-021: Set origin to center
  **/
 
 #ifndef WOODLAND_H
@@ -29,6 +30,7 @@ public:
         woodlandToken.lives = -1;
         setToken(woodlandToken);
         setAlive(true);
+        setOriginCenter();
         setCreatureID(name);
     }
 private:
