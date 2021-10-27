@@ -10,6 +10,7 @@
  * Revision History:
  *      21OCT2021 ED-003: Document Created
  *      22OCT2021 ED-008: Added ScoreToken functionality
+ *      26OCT2021 ED-015: Change value types to floats
  **/
 
 #ifndef EVIL_H
@@ -19,7 +20,7 @@
 
 class Evil: public Creature{
 public:
-    Evil(int xDim, int yDim, int x, int y, std::string name):Creature(xDim, yDim, x, y){initEvil(name);}
+    Evil(float xDim, float yDim, float x, float y, std::string name):Creature(xDim, yDim, x, y){initEvil(name);}
     void initEvil(std::string name)
     {
         setTextureAndSprite("graphics/" + name + ".png");

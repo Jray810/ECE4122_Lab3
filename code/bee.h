@@ -10,6 +10,7 @@
  * Revision History:
  *      21OCT2021 ED-003: Document Created
  *      22OCT2021 ED-008: Added ScoreToken functionality
+ *      26OCT2021 ED-015: Change value types to floats
  **/
 
 #ifndef BEE_H
@@ -20,7 +21,7 @@
 class Bee: public Creature
 {
 public:
-    Bee(int xDim, int yDim, int x, int y):Creature(xDim, yDim, x, y){initBee();}
+    Bee(float xDim, float yDim, float x, float y):Creature(xDim, yDim, x, y){initBee();}
     void initBee()
     {
         setTextureAndSprite("graphics/insect.png");

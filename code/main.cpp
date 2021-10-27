@@ -12,25 +12,33 @@
  *      21OCT2021 ED-003: Added basic bee
  *      22OCT2021 ED-008: Added bank of targets
  *      22OCT2021 ED-011: Added pause screen text
+ *      26OCT2021 ED-020: Added Buzzy implementation and full base game logic
  **/
 
 #include <SFML/Graphics.hpp>
-#include <iostream>
+#include <unistd.h>
 #include "bee.h"
-#include "unicorn.h"
-#include "woodland.h"
-#include "evil.h"
 #include "targetBank.h"
+#include "buzzy.h"
+
+#include <iostream>
 
 #define WINDOW_XDIM 1920
 #define WINDOW_YDIM 1080
 
 #define PAUSED 0
-#define PLAYING 1
+#define LAUNCH_PREP 1
+#define PLAYING 2
+#define INFLIGHT 3
+
+bool hitChecker(float xPos, float yPos);
 
 int gameState;
 int score;
 int lives;
+Bee* flyingBee;
+TargetBank* theTargets;
+Buzzy* buzzBullet;
 
 using namespace sf;
 
@@ -49,6 +57,12 @@ int main(){
     spriteBackground.setTexture(textureBackground);
     // Set the spriteBackground to cover the screen
     spriteBackground.setPosition(0, 0);
+
+    Texture textureLife;
+    textureLife.loadFromFile("graphics/buzzy life.png");
+    Sprite spriteLife;
+    spriteLife.setTexture(textureLife);
+    spriteLife.setPosition(160,40);
 
     score = 0;
     lives = 5;
@@ -166,15 +180,32 @@ int main(){
 	author1Text.setPosition(WINDOW_XDIM / 2.0f, WINDOW_YDIM * 3 / 4.0f);
 	author2Text.setPosition(WINDOW_XDIM / 2.0f, WINDOW_YDIM * 3 / 4.0f + 38);
 
-    scoreText.setPosition(1740,40);
+    scoreText.setPosition(1700,40);
 	livesText.setPosition(40, 40);
     powerText.setPosition(40,980);
 //-----------------------------------------------
+    RectangleShape powerBarOutline;
+    powerBarOutline.setSize(Vector2f(400,40));
+    powerBarOutline.setFillColor(Color::Transparent);
+    powerBarOutline.setOutlineColor(Color::Black);
+    powerBarOutline.setOutlineThickness(5);
+    powerBarOutline.setPosition(160, 980);
 
-    Bee flyingBee(60,40,1500,200);
-    TargetBank theTargets;
+    RectangleShape powerBar;
+    powerBar.setSize(Vector2f(0, 40));
+    powerBar.setFillColor(Color::Red);
+    powerBar.setPosition(160, 980);
 
-    gameState = START;
+    flyingBee = new Bee(60,40,1500,200);
+    buzzBullet = new Buzzy(237,85,40,WINDOW_YDIM / 2.0f);
+    theTargets = new TargetBank();
+    Clock clock;
+    Time timeCheck;
+
+    gameState = PAUSED;
+
+    float initVelocity;
+    bool lastSpaceBarHeld;
     while(window.isOpen())
     {
         /**
@@ -185,26 +216,119 @@ int main(){
             window.close();
         }
 
+        if (gameState == PAUSED)
+        {
+            initVelocity = 0;
+            lives = 5;
+            if (Keyboard::isKeyPressed(Keyboard::Enter))
+            {
+                score = 0;
+                gameState = LAUNCH_PREP;
+                sleep(1);
+            }
+        }
+        else if (gameState == LAUNCH_PREP)
+        {
+            initVelocity = 0;
+            lastSpaceBarHeld = false;
+            gameState = PLAYING;
+        }
+        else if (gameState == PLAYING)
+        {
+            float newAngle;
+            if (Keyboard::isKeyPressed(Keyboard::Up))
+            {
+                newAngle = buzzBullet->getAngle()-1 >= -90 || buzzBullet->getAngle()-1 == 0 ? buzzBullet->getAngle()-1 : -90;
+                buzzBullet->setAngle(newAngle);
+            }
+            else if (Keyboard::isKeyPressed(Keyboard::Down))
+            {
+                newAngle = buzzBullet->getAngle()+1 <= 0 ? buzzBullet->getAngle()+1 : 0;
+                buzzBullet->setAngle(newAngle);
+            }
+            else if (Keyboard::isKeyPressed(Keyboard::Space))
+            {
+                initVelocity+=10;
+                if (initVelocity > 800)
+                {
+                    initVelocity = 800;
+                }
+                lastSpaceBarHeld = true;
+            }
+            else if (!Keyboard::isKeyPressed(Keyboard::Space) && lastSpaceBarHeld)
+            {
+                gameState = INFLIGHT;
+                buzzBullet->launchBuzzy(buzzBullet->getAngle(), initVelocity);
+                clock.restart();
+                continue;
+            }
+            else if (Keyboard::isKeyPressed(Keyboard::Enter))
+            {
+                buzzBullet->reset(237,85,40,WINDOW_YDIM / 2.0f);
+                theTargets->targetReset();
+                gameState = PAUSED;
+                sleep(1);
+            }
+        }
+        else if (gameState == INFLIGHT)
+        {
+            timeCheck = clock.getElapsedTime();
+            buzzBullet->updatePosition(timeCheck.asSeconds());
+            if (hitChecker(buzzBullet->getXPos(), buzzBullet->getYPos()))
+            {
+                buzzBullet->reset(237,85,40,WINDOW_YDIM / 2.0f);
+                gameState = LAUNCH_PREP;
+                if (!theTargets->refresh())
+                {
+                    theTargets->targetReset();
+                }
+            }
+            else if (Keyboard::isKeyPressed(Keyboard::Enter))
+            {
+                buzzBullet->reset(237,85,40,WINDOW_YDIM / 2.0f);
+                gameState = PAUSED;
+                sleep(1);
+            }
+            if (lives < 1)
+            {
+                theTargets->targetReset();
+                gameState = PAUSED;
+            }
+        }
+
         /**
          * Perform Drawings
          **/
         window.clear();
         window.draw(spriteBackground);
-        if(flyingBee.getAlive())
+        if(flyingBee->getAlive())
         {
-            window.draw(flyingBee.getSpriteCreature());
+            window.draw(flyingBee->getSpriteCreature());
         }
-        for(int i=0; i<theTargets.getCol1Size(); ++i)
+        if(buzzBullet->getAlive())
         {
-            window.draw(theTargets.getColCreature(0,i)->getSpriteCreature());
+            window.draw(buzzBullet->getSpriteCreature());
         }
-        for(int i=0; i<theTargets.getCol2Size(); ++i)
+        for(int i=0; i<theTargets->getCol1Size(); ++i)
         {
-            window.draw(theTargets.getColCreature(1,i)->getSpriteCreature());
+            window.draw(theTargets->getColCreature(0,i)->getSpriteCreature());
         }
+        for(int i=0; i<theTargets->getCol2Size(); ++i)
+        {
+            window.draw(theTargets->getColCreature(1,i)->getSpriteCreature());
+        }
+	    scoreText.setString("Score: " + std::to_string(score));
         window.draw(scoreText);
         window.draw(livesText);
         window.draw(powerText);
+        powerBar.setSize(Vector2f(initVelocity/2.0f, 40));
+        window.draw(powerBar);
+        window.draw(powerBarOutline);
+        for (int i=0; i<lives; ++i)
+        {
+            spriteLife.setPosition(160 + 80 * i, 40);
+            window.draw(spriteLife);
+        }
         if(gameState == PAUSED)
         {
             window.draw(titleText);
@@ -216,20 +340,46 @@ int main(){
             window.draw(author2Text);
         }
         window.display();
+    }
+    delete flyingBee;
+    delete theTargets;
+    delete buzzBullet;
+    return 0;
+}
 
-        while (gameState == PAUSED)
+bool hitChecker(float xPos, float yPos)
+{
+    if (buzzBullet->getXPos() > WINDOW_XDIM || buzzBullet->getYPos() > WINDOW_YDIM)
+    {
+        lives--;
+        return true;
+    }
+
+    if (flyingBee->isHit(xPos, yPos))
+    {
+        score += flyingBee->getToken().points;
+        return true;
+    }
+
+    for (int i=0; i<theTargets->getCol1Size(); ++i)
+    {
+        if (theTargets->getColCreature(0,i)->isHit(xPos, yPos))
         {
-            if (Keyboard::isKeyPressed(Keyboard::Enter))
-            {
-                gameState = PLAYING;
-            }
-            else if (Keyboard::isKeyPressed(Keyboard::Escape))
-            {
-                gameState = PLAYING;
-                window.close();
-            }
+            score += theTargets->getColCreature(0,i)->getToken().points;
+            lives += theTargets->getColCreature(0,i)->getToken().lives;
+            return true;
         }
     }
 
-    return 0;
+    for (int i=0; i<theTargets->getCol2Size(); ++i)
+    {
+        if (theTargets->getColCreature(1,i)->isHit(xPos, yPos))
+        {
+            score += theTargets->getColCreature(1,i)->getToken().points;
+            lives += theTargets->getColCreature(1,i)->getToken().lives;
+            return true;
+        }
+    }
+    
+    return false;
 }
