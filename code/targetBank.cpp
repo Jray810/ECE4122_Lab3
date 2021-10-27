@@ -10,6 +10,7 @@
  * Revision History:
  *      22OCT2021 ED-008: Document Created
  *      22OCT2021 ED-012: Resized creature images
+ *      26OCT2021 ED-019: Added refresh() function
  **/
 
 #include "targetBank.h"
@@ -91,8 +92,70 @@ void TargetBank::targetReset()
     for(int i=0; i<5; ++i)
     {
         col1[i]->setPos(1500, 900 - 144 * i);
+        col1[i]->setAlive(true);
         col2[i]->setPos(1700, 900 - 144 * i);
+        col2[i]->setAlive(true);
     }
+}
+
+bool TargetBank::refresh()
+{
+    if (col1.size() > 0)
+    {
+        for (int i=0; i<col1.size(); ++i)
+        {
+            if (!col1[i]->getAlive())
+            {
+                if (col1[i]->getCreatureID() == "tiger" || col1[i]->getCreatureID() == "bulldog")
+                {
+                    col1.clear();
+                    break;
+                }
+                else if (col1[i]->getCreatureID() == "Unicorn")
+                {
+                    col1.erase(col1.begin()+i);
+                    positionUpdate();
+                    break;
+                }
+                else
+                {
+                    col1[i]->setAlive(true);
+                }
+            }
+        }
+    }
+
+    if (col2.size() > 0)
+    {
+        for (int i=0; i<col2.size(); ++i)
+        {
+            if (!col2[i]->getAlive())
+            {
+                if (col2[i]->getCreatureID() == "tiger" || col2[i]->getCreatureID() == "bulldog")
+                {
+                    col2.clear();
+                    break;
+                }
+                else if (col2[i]->getCreatureID() == "Unicorn")
+                {
+                    col2.erase(col2.begin()+i);
+                    positionUpdate();
+                    break;
+                }
+                else
+                {
+                    col2[i]->setAlive(true);
+                }
+            }
+        }
+    }
+    
+    if (col1.size() == 0 && col2.size() == 0)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 void TargetBank::positionUpdate()

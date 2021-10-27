@@ -9,6 +9,7 @@
  * 
  * Revision History:
  *      22OCT2021 ED-008: Document Created
+ *      26OCT2021 ED-019: Added refresh() function
  **/
 
 #ifndef TARGETBANK_H
@@ -26,6 +27,7 @@ public:
     ~TargetBank();
 
     void targetReset();
+    bool refresh();
     void positionUpdate();
 
     // Setters
