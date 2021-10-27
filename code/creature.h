@@ -14,6 +14,7 @@
  *      24OCT2021 ED-013: Added hit detection
  *      26OCT2021 ED-014: Added rotation handling
  *      26OCT2021 ED-015: Change value types to floats
+ *      26OCT2021 ED-016: Added angle handling and setOriginCenter
  **/
 
 #ifndef CREATURE_H
@@ -52,7 +53,11 @@ public:
     void setXPos(float val){xPos = val; spriteCreature.setPosition(xPos,yPos);}
     void setYPos(float val){yPos = val; spriteCreature.setPosition(xPos,yPos);}
     void setPos(float x, float y){xPos = x; yPos = y; spriteCreature.setPosition(x,y);}
-    void setAngle(float val){angle = val; spriteCreature.setRotation(val);}
+    void setAngle(float val)
+    {
+        angle = val;
+        spriteCreature.setRotation(angle);
+    }
     void setAlive(bool val){alive = val;}
     void setCreatureID(std::string name){creatureID = name;}
     void setTextureAndSprite(std::string filePath)
@@ -62,6 +67,10 @@ public:
         spriteCreature.setPosition(xPos, yPos);
     }
     void setToken(ScoreToken val){token = val;}
+    void setOriginCenter()
+    {
+        spriteCreature.setOrigin(xDim * 0.5, yDim * 0.5);
+    }
 
     // Getters
     float getXDim(){return xDim;}
